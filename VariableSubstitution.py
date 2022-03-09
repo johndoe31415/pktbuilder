@@ -19,24 +19,19 @@
 #
 #	Johannes Bauer <JohannesBauer@gmx.de>
 
-import json
+class VariableSubstitution():
+	def __init__(self, variables):
+		self._vars = variables
 
-class Recipe():
-	def __init__(self, filename):
-		with open(filename) as f:
-			self._recipe = json.load(f)
+	@staticmethod
+	def __substitute(text, vardict):
+		for (srch, repl) in vardict.items():
+			src = "${" + srch + "}"
+			text = text.replace(src, repl)
+		return text
 
-	@property
-	def name(self):
-		return self._recipe["name"]
-
-	@property
-	def target(self):
-		return self._recipe["target"]
-
-	@property
-	def arch(self):
-		return self._recipe["arch"]
-
-	def __iter__(self):
-		return iter(self._recipe["ingredients"])
+	def substitute(self, text, extra = None):
+		text = self.__substitute(text, self._vars)
+		if extra is not None:
+			text = self.__substitute(text, extra)
+		return text

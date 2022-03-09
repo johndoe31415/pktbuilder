@@ -27,6 +27,7 @@ from FriendlyArgumentParser import FriendlyArgumentParser
 from PackageDefinitions import PackageDefinitions
 from Recipe import Recipe
 from RecipeBuilder import RecipeBuilder
+from VariableSubstitution import VariableSubstitution
 
 parser = FriendlyArgumentParser(description = "Build a GCC ARM embedded toolchain.")
 parser.add_argument("--preserve-tempfiles", action = "store_true", help = "Do not remove temporary build directories.")
@@ -50,10 +51,11 @@ logging.basicConfig(format = "{name:>30s} [{levelname:.1s}]: {message}", style =
 
 for recipe_name in args.recipe:
 	recipe = Recipe(recipe_name)
-	variables = {
+	variables = VariableSubstitution({
 		"target":	os.path.realpath(os.path.expanduser(recipe.target)),
 		"arch":		recipe.arch,
-	}
+		"name":		recipe.name,
+	})
 	pkg_defs = PackageDefinitions(args.packages_definition, variables = variables)
-	builder = RecipeBuilder(args, pkg_defs, recipe)
+	builder = RecipeBuilder(args, pkg_defs, recipe, variables = variables)
 	builder.run()

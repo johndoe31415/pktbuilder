@@ -3,6 +3,7 @@
 	"target": "~/bin/gcc/arm-cm3/",
 	"arch": "arm-cortex-m3",
 	"ingredients": [
+		{ "type": "writefile", "filename": "${target}/environment", "content": "export PS1=\"(${name}) ${PS1}\"\nexport LD_LIBRARY_PATH=\"${target}/lib\"\nexport PATH=\"${target}/bin:${PATH}\"\n" },
 		{ "name": "binutils" },
 		{ "name": "gcc", "flags": [ "bootstrap" ] },
 		{ "name": "newlib" },

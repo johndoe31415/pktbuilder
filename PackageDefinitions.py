@@ -29,30 +29,20 @@ class PackageDefinitions():
 			self._defs = json.load(f)
 		self._variables = variables
 
-	def _substitute(self, value, extra = None):
-		for (srch, repl) in self._variables.items():
-			src = "${" + srch + "}"
-			value = value.replace(src, repl)
-		if extra is not None:
-			for (srch, repl) in extra.items():
-				src = "${" + srch + "}"
-				value = value.replace(src, repl)
-		return value
-
 	def _parse_opts(self, opts, arch, flags):
 		result = [ ]
 		for opt in opts:
 			if isinstance(opt, str):
-				result.append(self._substitute(opt))
+				result.append(self._variables.substitute(opt))
 			else:
 				(condition, value) = opt
 				if condition.startswith("arch="):
 					if re.fullmatch(condition[5:], arch):
-						result.append(self._substitute(value))
+						result.append(self._variables.substitute(value))
 				elif condition.startswith("flag="):
 					flagname = condition[5:]
 					if flagname in flags:
-						result.append(self._substitute(value))
+						result.append(self._variables.substitute(value))
 				else:
 					raise NotImplementedError("Unknown condition: %s" % (condition))
 		return result
@@ -69,7 +59,7 @@ class PackageDefinitions():
 		if "env" in definition:
 			for varname in definition["env"]:
 				extra = { varname: os.environ.get(varname, "") }
-				definition["env"][varname] = self._substitute(definition["env"][varname], extra)
+				definition["env"][varname] = self._variables.substitute(definition["env"][varname], extra)
 
 		return definition
 

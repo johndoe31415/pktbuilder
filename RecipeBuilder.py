@@ -34,10 +34,11 @@ from WorkDir import WorkDir
 _log = logging.getLogger("pktbuilder.RecipeBuilder")
 
 class RecipeBuilder():
-	def __init__(self, args, pkg_defs, recipe):
+	def __init__(self, args, pkg_defs, recipe, variables):
 		self._args = args
 		self._pkg_defs = pkg_defs
 		self._recipe = recipe
+		self._variables = variables
 		self._pkg_dir = os.path.realpath(self._args.download_directory)
 		self._log_dir = os.path.realpath(self._args.log_directory)
 		with contextlib.suppress(FileExistsError):
@@ -102,7 +103,7 @@ class RecipeBuilder():
 		else:
 			raise NotImplementedError(ruleset)
 
-	def _run_ingredient(self, ingredient, ingredient_no):
+	def _run_build_ingredient(self, ingredient, ingredient_no):
 		pkg = self._pkg_defs.get(ingredient["name"], self._recipe.arch, flags = ingredient.get("flags", [ ]))
 		source = self._get_source(pkg["src"]["uri"])
 		tmpdir = tempfile.mkdtemp(prefix = "pktbuilder_")
@@ -119,11 +120,24 @@ class RecipeBuilder():
 			if not self._args.preserve_tempfiles:
 				shutil.rmtree(tmpdir)
 
+	def _run_writefile_ingredient(self, ingredient, ingredient_no):
+		filename = self._variables.substitute(ingredient["filename"])
+		with contextlib.suppress(FileExistsError):
+			os.makedirs(os.path.dirname(filename))
+		with open(filename, "w") as f:
+			f.write(self._variables.substitute(ingredient["content"]))
+
 	def run(self):
 		for (ingredient_no, ingredient) in enumerate(self._recipe, 1):
 			if ingredient_no < self._args.start_at:
 				continue
-			self._run_ingredient(ingredient, ingredient_no)
+			ingredient_type = ingredient.get("type", "build")
+			if ingredient_type == "build":
+				self._run_build_ingredient(ingredient, ingredient_no)
+			elif ingredient_type == "writefile":
+				self._run_writefile_ingredient(ingredient, ingredient_no)
+			else:
+				raise NotImplementedError(ingredient_type)
 			if self._args.one_pkg_only:
 				_log.info("Breaking off after one package.")
 				break
