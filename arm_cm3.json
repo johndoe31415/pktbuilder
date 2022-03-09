@@ -1,0 +1,12 @@
+{
+	"name": "cm3",
+	"target": "~/bin/gcc/arm-cm3/",
+	"arch": "arm-cortex-m3",
+	"ingredients": [
+		{ "name": "binutils" },
+		{ "name": "gcc", "flags": [ "bootstrap" ] },
+		{ "name": "newlib" },
+		{ "name": "gcc", "flags": [ "lang-c" ] },
+		{ "name": "gdb" }
+	]
+}
