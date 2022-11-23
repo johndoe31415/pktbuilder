@@ -1,0 +1,13 @@
+{
+	"name": "cm4",
+	"target": "~/bin/gcc/arm-cm4/",
+	"arch": "arm-cortex-m4",
+	"ingredients": [
+		{ "type": "writefile", "filename": "${target}/environment", "content": "export PS1=\"(${name}) ${PS1}\"\nexport LD_LIBRARY_PATH=\"${target}/lib\"\nexport PATH=\"${target}/bin:${PATH}\"\n" },
+		{ "name": "binutils" },
+		{ "name": "gcc", "flags": [ "bootstrap" ] },
+		{ "name": "newlib" },
+		{ "name": "gcc", "flags": [ "lang-c" ] },
+		{ "name": "gdb" }
+	]
+}
