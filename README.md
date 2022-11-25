@@ -22,5 +22,12 @@ $ cat arm_cm3.json
 $ ./pktbuilder arm_cm3.json 
 ```
 
+## Dependencies
+For a typical installation (binutils/gcc/gdb) you will need the following dependencies:
+
+```
+# apt-get install pigz texinfo libgmp3-dev libmpfr-dev libmpc-dev
+```
+
 ## License
 GNU GPL-3.
