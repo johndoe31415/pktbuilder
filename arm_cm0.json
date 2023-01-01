@@ -1,6 +1,6 @@
 {
 	"name": "cm0",
-	"target": "~/bin/gcc/arm-cm0/",
+	"target": "~/bin/gccbin/arm-cm0/",
 	"arch": "arm-cortex-m0",
 	"ingredients": [
 		{ "type": "writefile", "filename": "${target}/environment", "content": "export PS1=\"(${name}) ${PS1}\"\nexport LD_LIBRARY_PATH=\"${target}/lib\"\nexport PATH=\"${target}/bin:${PATH}\"\n" },
